@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'home/css/signup.css' %}">
+    <title>Sign Up</title>
+</head>
+<body>
+    <div class="main">
+        <div class="logo-div">
+            <img src="{% static 'home/images/logo02.png' %}" alt="Logo">
+        </div>
+        {% if message %}
+                <div class="error-box">
+                    <h4>{{ message }}</h4>
+                </div>
+        {% endif %}
+    
+        <div class="form-div">
+            <h3>SignUp</h3>
+
+    
+            <form class="form" action="" method="post">
+
+                {% csrf_token %}
+
+                <div class="form-interior">
+                    <label class="form-label" for="">Enter Username: </label>
+                    <input class="form-input" type="text" name="username" value="{{ username }}" required>
+                </div>
+
+                <div class="form-interior">
+                    <label class="form-label" for="">Enter Email: </label>
+                    <input class="form-input" type="email" name="email" value="{{ email }}" required>
+    
+                </div>
+    
+                <div class="form-interior">
+                    <label class="form-label" for="">Enter Password: </label>
+                    <input class="form-input" type="password" name="password01" value="{{ password01 }}" id="" required> 
+                </div>
+    
+                <div class="form-interior">
+                    <label class="form-label" for="">Confirm Password: </label>
+                    <input class="form-input" type="password" name="password02" id="" required>
+                </div>
+    
+                <button class="submit-btn" type="submit">Sign Up</button>
+            </form>
+
+            <h5>Already have an account? <a href="{% url 'login' %}">LogIn</a></h5>
+        </div>
+    </div>
+</body>
+</html>

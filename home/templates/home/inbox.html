@@ -1,0 +1,294 @@
+{% extends 'home/base.html' %}
+
+{% load static %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'home/css/inbox.css' %}">
+{% endblock %}
+
+{% block title %}To do | Inbox {% endblock %}
+
+{% block content %}
+<div class="card-list">
+    <div class="all-task-header">
+        <h2>
+            All Tasks
+        </h2>
+        <div class="addTask-btn-div">
+            <button id="myBtn" onclick="setupModal('addTaskForm', false, this)">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M8 3.5a.5.5 0 0 1 .5.5v3.5h3.5a.5.5 0 0 1 0 1H8.5v3.5a.5.5 0 0 1-1 0V8.5H3.5a.5.5 0 0 1 0-1H7.5V4a.5.5 0 0 1 .5-.5z"/>
+                </svg>
+                
+                Add Task
+            </button>
+            
+        </div>
+    </div>
+
+    <div class="task-types">
+
+
+        <!-- All The Remaining tasks START -->
+
+        <div class="collapsable-header">
+            <button class="collapseButton" data-target="remainingId">
+                <svg width="24" height="24"><path fill="none" stroke="currentColor" d="m16 10-4 4-4-4"></path></svg>
+            </button>
+            <h3>Remaining Tasks</h3>
+        </div>
+        <div class="collapsableDiv" id="remainingId" >
+            
+            {% for task in remaining_tasks %}
+                <div class="task_card">
+                    <div class="task_checkbox">
+                        
+                        <input class="styled-checkbox" type="checkbox" name="completed" id="task_{{ task.id }}" {% if task.completed %} checked {% endif %} onclick="updateTaskStatus(this)">
+                        
+                    </div>
+                    <div class="task_details">
+                        <p>{{task.task_name}}</p>
+                        <p class="task_card_date">
+                            <svg  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="17px" height="17px">
+                                <path d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 21c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H5V8h14v13z"/>
+                            </svg>
+                            <span>
+                                {% if today == task.due_date %}
+                                    Today
+                                {% else %}
+                                    {{ task.due_date }}
+                                {% endif %}
+                            </span>
+                                
+                             <!-- {{task.due_date}} -->
+                        </p>
+                    </div>
+                    <div class="task_btns">
+                        <div class="dropdown">
+                            <button class="menu" data-menuid="menu{{ task.id }}" >
+                                <!-- <?xml version="1.0" encoding="iso-8859-1"?> -->
+                                <svg width="24" height="24" version="1.1" id="Icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 32 32" style="enable-background:new 0 0 32 32;" xml:space="preserve">
+                                    <style type="text/css">
+                                        .st0 {
+                                            fill: none;
+                                            stroke: #000000;
+                                            stroke-width: 2;
+                                            stroke-linecap: round;
+                                            stroke-linejoin: round;
+                                            stroke-miterlimit: 10;
+                                        }
+                                    </style>
+                                    <circle class="st0" cx="16" cy="7" r="2" />
+                                    <circle class="st0" cx="16" cy="16" r="2" />
+                                    <circle class="st0" cx="16" cy="25" r="2" />
+                                </svg>
+                            </button>
+                            <div class="select" id="menu{{ task.id }}">
+                                <button 
+                                    class="menu_btns"
+                                    onclick="setupModal('editTaskForm', true, this)"
+                                    data-task-id='{{ task.id }}'
+                                    data-task-name='{{task.task_name}}'
+                                    data-task-description='{{task.description}}'
+                                    data-due-date='{{task.due_date}}'
+                                >
+                                    Edit
+                                </button>
+                                <button class="menu_btns" id="deleteTask" data-task-id="{{ task.id }}" data-csrf="{{ csrf_token }}" onclick="deleteTask(this)">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="no-task">
+                    <p>No remaining Tasks</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- All The Remaining tasks END -->
+    
+
+
+        <!-- All The Overdue tasks START -->
+    
+        <div class="collapsable-header">
+            
+            <button class="collapseButton" data-target="overdueId">
+                <svg width="24" height="24">
+                    <path fill="none" stroke="currentColor" transform="rotate(-90 12 12)" d="m16 10-4 4-4-4"></path>
+                </svg>
+            </button>
+            <h3>Overdue</h3>
+        </div>
+        <div class="collapsableDiv" id="overdueId" style="display: none;">
+            {% for task in overdue_tasks %}
+                <div class="expired_task task_card">
+                    <div class="task_checkbox expired_task_checkbox">
+                        
+                        <input class="styled-checkbox" type="checkbox" name="completed" id="task_{{ task.id }}" {% if task.completed %} checked {% endif %} onclick="updateTaskStatus(this)">
+                        
+                    </div>
+                    <div class="task_details">
+                        <p>{{task.task_name}}</p>
+                        <p class="task_card_date expired_task_date">
+                            <svg  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="17px" height="17px">
+                                <path d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 21c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H5V8h14v13z"/>
+                            </svg>
+                            <span>
+                                {% if today == task.due_date %}
+                                    Today
+                                {% else %}
+                                    {{ task.due_date }}
+                                {% endif %}
+                            </span>
+                             <!-- {{task.due_date}} -->
+                        </p>
+                        
+                    </div>
+                    <div class="task_btns">
+                        <div class="dropdown">
+                            <button class="menu" data-menuid="menu{{ task.id }}" >
+                                <!-- <?xml version="1.0" encoding="iso-8859-1"?> -->
+                                <svg width="24" height="24" version="1.1" id="Icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 32 32" style="enable-background:new 0 0 32 32;" xml:space="preserve">
+                                    <style type="text/css">
+                                        .st0 {
+                                            fill: none;
+                                            stroke: #000000;
+                                            stroke-width: 2;
+                                            stroke-linecap: round;
+                                            stroke-linejoin: round;
+                                            stroke-miterlimit: 10;
+                                        }
+                                    </style>
+                                    <circle class="st0" cx="16" cy="7" r="2" />
+                                    <circle class="st0" cx="16" cy="16" r="2" />
+                                    <circle class="st0" cx="16" cy="25" r="2" />
+                                </svg>
+                            </button>
+                            <div class="select" id="menu{{ task.id }}">
+                                <button 
+                                    class="menu_btns"
+                                    onclick="setupModal('editTaskForm', true, this)"
+                                    data-task-id='{{ task.id }}'
+                                    data-task-name='{{task.task_name}}'
+                                    data-task-description='{{task.description}}'
+                                    data-due-date='{{task.due_date}}'
+                                >
+                                    Edit
+                                </button>
+                                <button class="menu_btns" id="deleteTask" data-task-id="{{ task.id }}" data-csrf="{{ csrf_token }}" onclick="deleteTask(this)">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="no-task">
+                    <p>No overdue Tasks</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- All The Overdue Tasks END -->
+
+
+        <!-- All The Completed Tasks START -->
+
+        <div class="collapsable-header">
+            <button class="collapseButton" data-target="completedId">
+                <svg width="24" height="24">
+                    <path fill="none" stroke="currentColor" transform="rotate(-90 12 12)" d="m16 10-4 4-4-4"></path>
+                </svg>
+            </button>
+            <h3>completed</h3>
+        </div>
+        <div class="collapsableDiv" id="completedId" style="display: none;">
+            {% for task in completed_tasks %}
+                <div class="task_card expired_task">
+                    <div class="task_checkbox expired_task_checkbox">
+                        
+                        <input class="styled-checkbox" type="checkbox" name="completed" id="task_{{ task.id }}" {% if task.completed %} checked {% endif %} onclick="updateTaskStatus(this)">
+                        
+                    </div>
+                    <div class="task_details">
+                        <p class="task-completed">{{task.task_name}}</p>
+                        <p class="task_card_date expired_task_date">
+                            <svg  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="17px" height="17px">
+                                <path d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 21c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H5V8h14v13z"/>
+                            </svg>
+                            <span>
+                                {% if today == task.due_date %}
+                                    Today
+                                {% else %}
+                                    {{ task.due_date }}
+                                {% endif %}
+                            </span>
+                             <!-- {{task.due_date}} -->
+                        </p>
+                    </div>
+                    <div class="task_btns">
+                        <div class="dropdown">
+                            <button class="menu" data-menuid="menu{{ task.id }}" >
+                                <!-- <?xml version="1.0" encoding="iso-8859-1"?> -->
+                                <svg width="24" height="24" version="1.1" id="Icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 32 32" style="enable-background:new 0 0 32 32;" xml:space="preserve">
+                                    <style type="text/css">
+                                        .st0 {
+                                            fill: none;
+                                            stroke: #000000;
+                                            stroke-width: 2;
+                                            stroke-linecap: round;
+                                            stroke-linejoin: round;
+                                            stroke-miterlimit: 10;
+                                        }
+                                    </style>
+                                    <circle class="st0" cx="16" cy="7" r="2" />
+                                    <circle class="st0" cx="16" cy="16" r="2" />
+                                    <circle class="st0" cx="16" cy="25" r="2" />
+                                </svg>
+                            </button>
+                            <div class="select" id="menu{{ task.id }}">
+                                <button 
+                                    class="menu_btns"
+                                    onclick="setupModal('editTaskForm', true, this)"
+                                    data-task-id='{{ task.id }}'
+                                    data-task-name='{{task.task_name}}'
+                                    data-task-description='{{task.description}}'
+                                    data-due-date='{{task.due_date}}'
+                                >
+                                    Edit
+                                </button>
+                                <button class="menu_btns" id="deleteTask" data-task-id="{{ task.id }}" data-csrf="{{ csrf_token }}" onclick="deleteTask(this)">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="no-task">
+                    <p>No completed tasks</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- All The Completed Tasks END -->
+
+
+    </div>
+
+    
+
+
+
+    
+
+
+    
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script  defer src="{% static 'home/js/inbox.js' %}"></script>
+{% endblock %}

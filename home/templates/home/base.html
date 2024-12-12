@@ -1,0 +1,176 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block stylesheet %}
+
+    {% endblock %}
+    <title>{% block title %} {% endblock %}</title>
+</head>
+<body>
+
+    <!--Add Task Popup Model -->
+    <div id="addTaskForm" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <form class="modal-form"  method="post">
+                <h3>Add Task</h3>
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ form.task_name }}
+                </div>
+                <div class="form-group">
+                    {{ form.description }}
+                </div>
+                <div class="form-group">
+                    {{ form.due_date }}
+                </div>
+                <button type="submit" id="addTask" class="submit-btn">Add Task</button>
+            </form>
+        </div>
+    </div>
+
+    <!--Edit Task Popup Model -->
+    <div id="editTaskForm" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <form id="editInternal" method="post" class="modal-form">
+                <h3>Edit Task</h3>
+                {% csrf_token %}
+                <div id="editFormDiv" class="modal-form">
+
+                </div>
+                
+            </form>
+        </div>
+    </div>
+
+
+    <div class="first-div">
+        <div class="nav-bar">
+            <div class="hamburger-menu" id="hamburger-menu">
+                <img src="{% static 'home/images/menu.png' %}" alt="">
+            </div>
+
+            <div class="logo-div">
+                <img src="{% static 'home/images/logo05.png' %}" alt="">
+            </div>
+            <div class="profile-div">
+                <button class="profile-btn">
+                    <div class="profile-img">
+                        <img src="{% static 'home/images/profile.png' %}" alt="">
+                    </div>
+                    <div class="profile-name">
+                        <span>{{ username }}</span>
+                    </div>
+                </button>
+                
+            </div>
+
+        </div>
+
+
+        <div class="main">
+            <div class="sidebar-container" id="sidebar-container">
+                <div class="sidebar">
+                    <div class="sidebar-div01">
+                        <a id="add_task_link" onclick="setupModal('addTaskForm', false, this)">
+                            <div class="sidebar_link_div01">
+                                <svg xmlns="http://www.w3.org/2000/svg" id="add" x="0" y="0" version="1.1" viewBox="0 0 29 29" xml:space="preserve" width="24" height="24">
+                                    <path fill="currentColor" d="M14.5 2C7.596 2 2 7.596 2 14.5S7.596 27 14.5 27 27 21.404 27 14.5 21.404 2 14.5 2zM21 15.5h-5.5V21a1 1 0 1 1-2 0v-5.5H8a1 1 0 1 1 0-2h5.5V8a1 1 0 1 1 2 0v5.5H21a1 1 0 1 1 0 2z"></path>
+                                </svg>
+                            </div>
+                            <div class="sidebar_link_div02">
+                                <span>
+                                    Add Task
+                                </span>
+                            </div>
+                        </a>
+    
+                        <a id="today" href="{% url 'today' %}">
+                            <div class="sidebar_link_div01">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" id="calendar-due">
+                                    <path fill="currentColor" d="M7 8C7 7.44772 7.44772 7 8 7H16C16.5523 7 17 7.44772 17 8 17 8.55228 16.5523 9 16 9H8C7.44772 9 7 8.55228 7 8zM12 16C13.1046 16 14 15.1046 14 14 14 12.8954 13.1046 12 12 12 10.8954 12 10 12.8954 10 14 10 15.1046 10.8954 16 12 16z"></path>
+                                    <path fill="currentColor" fill-rule="evenodd" d="M6 3C4.34315 3 3 4.34315 3 6V18C3 19.6569 4.34315 21 6 21H18C19.6569 21 21 19.6569 21 18V6C21 4.34315 19.6569 3 18 3H6ZM18 5H6C5.44772 5 5 5.44772 5 6V18C5 18.5523 5.44772 19 6 19H18C18.5523 19 19 18.5523 19 18V6C19 5.44772 18.5523 5 18 5Z" clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                            <div class="sidebar_link_div02">
+                                <span>
+                                    Today
+                                </span>
+                            </div>
+                        </a>
+    
+                        <a id="inbox" href="{% url 'inbox' %}">
+                            <div class="sidebar_link_div01">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 22 18" id="inbox">
+                                    <g fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                                        <g stroke="currentColor" stroke-width="2" transform="translate(-1452 -1691)">
+                                            <g transform="translate(1453 1692)">
+                                                <path d="M20 9h-6l-2 3H8L6 9H0"></path>
+                                                <path d="M3.47 1.19L0 9v5a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9l-3.47-7.81A2 2 0 0 0 14.7 0H5.3a2 2 0 0 0-1.83 1.19z"></path>
+                                            </g>
+                                        </g>
+                                    </g>
+                                </svg>
+                            </div>
+                            <div class="sidebar_link_div02">
+                                <span>
+                                    Inbox
+                                </span>
+                            </div>
+                            
+                            
+                        </a>
+    
+                        <a id="upcoming" href="{% url 'upcoming' %}">
+                            <div class="sidebar_link_div01">
+                                <svg xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" viewBox="0 0 24 24" id="calendar" width="24" height="24" fill="currentColor">
+                                    <path d="M12,19a1,1,0,1,0-1-1A1,1,0,0,0,12,19Zm5,0a1,1,0,1,0-1-1A1,1,0,0,0,17,19Zm0-4a1,1,0,1,0-1-1A1,1,0,0,0,17,15Zm-5,0a1,1,0,1,0-1-1A1,1,0,0,0,12,15ZM19,3H18V2a1,1,0,0,0-2,0V3H8V2A1,1,0,0,0,6,2V3H5A3,3,0,0,0,2,6V20a3,3,0,0,0,3,3H19a3,3,0,0,0,3-3V6A3,3,0,0,0,19,3Zm1,17a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V11H20ZM20,9H4V6A1,1,0,0,1,5,5H6V6A1,1,0,0,0,8,6V5h8V6a1,1,0,0,0,2,0V5h1a1,1,0,0,1,1,1ZM7,15a1,1,0,1,0-1-1A1,1,0,0,0,7,15Zm0,4a1,1,0,1,0-1-1A1,1,0,0,0,7,19Z"></path>
+                                </svg>
+                            </div>
+    
+                            <div class="sidebar_link_div02">
+                                <span>Upcoming</span>
+                            </div>
+                            
+                        </a>
+                    </div>
+                    
+                    <div class="sidebar-div02">
+                        <button class="logout-btn" data-csrf="{{ csrf_token }}" onclick="logOut(this)">
+                            <div class="sidebar_link_div01">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="logout" width="24" height="24">
+                                    <path fill="currentColor" d="M4,12a1,1,0,0,0,1,1h7.59l-2.3,2.29a1,1,0,0,0,0,1.42,1,1,0,0,0,1.42,0l4-4a1,1,0,0,0,.21-.33,1,1,0,0,0,0-.76,1,1,0,0,0-.21-.33l-4-4a1,1,0,1,0-1.42,1.42L12.59,11H5A1,1,0,0,0,4,12ZM17,2H7A3,3,0,0,0,4,5V8A1,1,0,0,0,6,8V5A1,1,0,0,1,7,4H17a1,1,0,0,1,1,1V19a1,1,0,0,1-1,1H7a1,1,0,0,1-1-1V16a1,1,0,0,0-2,0v3a3,3,0,0,0,3,3H17a3,3,0,0,0,3-3V5A3,3,0,0,0,17,2Z"></path>
+                                </svg>
+                            </div>
+                            <div class="sidebar_link_div02">
+                                <span>
+                                    Log Out
+                                </span>
+                            </div>
+                            
+                            
+                        </button>
+                    </div>
+                    
+    
+                </div>
+    
+            </div>
+            
+            <div class="content">
+                {% block content %}
+
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+    {% block scripts %}
+
+    {% endblock %}
+</body>
+</html>

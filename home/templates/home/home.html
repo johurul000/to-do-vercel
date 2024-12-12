@@ -1,0 +1,155 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'home/css/home.css' %}">
+    <title>To Do</title>
+</head>
+<body>
+    <div class="main">
+        <div class="header">
+            <h1 id="home">To Do</h1>
+        </div>
+        
+
+        
+
+        <div class="content">
+
+            <div class="addTask-btn-div">
+                <button id="myBtn" onclick="setupModal('addTaskForm', false, this)">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M8 3.5a.5.5 0 0 1 .5.5v3.5h3.5a.5.5 0 0 1 0 1H8.5v3.5a.5.5 0 0 1-1 0V8.5H3.5a.5.5 0 0 1 0-1H7.5V4a.5.5 0 0 1 .5-.5z"/>
+                    </svg>
+                    Add Task
+                </button>
+            </div>
+            
+    
+            <!--Add Task Popup Model -->
+            <div id="addTaskForm" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <form class="model_form"  method="post">
+                        <h3>Add Task</h3>
+                        {% csrf_token %}
+                        {{form}}
+                        <button type="submit" id="addTask">Add Task</button>
+                    </form>
+                </div>
+            </div>
+    
+            <!--Edit Task Popup Model -->
+            <div id="editTaskForm" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <form id="editInternal" method="post">
+                        <h3>Edit Task</h3>
+                        {% csrf_token %}
+                        <div id="editFormDiv">
+    
+                        </div>
+                        
+                    </form>
+                </div>
+            </div>
+
+            <!--View Task Popup Model -->
+            <div id="viewTask" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <form id="editInternal" method="post">
+                        <h3>Edit Task</h3>
+                        {% csrf_token %}
+                        <div id="viewTaskDiv">
+    
+                        </div>
+                        
+                    </form>
+                </div>
+            </div>
+
+            <!-- Remaining Tasks -->
+            <div class="allTasks">
+                <h3>Remaining Tasks</h3>
+                <div class="card-list">
+                    {% for task in remaining_tasks %}
+                        <div class="task_card">
+                            <div class="task_checkbox">
+                                
+                                <input class="styled-checkbox" type="checkbox" name="completed" id="task_{{ task.id }}" {% if task.completed %} checked {% endif %} onclick="updateTaskStatus(this)">
+                                
+                            </div>
+                            <div class="task_details">
+                                <h4>{{task.task_name}}</h4>
+                                <h7>Due on: {{task.due_date}}</h7>
+                                <div class="task_btns">
+                                    <button 
+                                        onclick="setupModal('editTaskForm', true, this)"
+                                        data-task-id='{{ task.id }}'
+                                        data-task-name='{{task.task_name}}'
+                                        data-task-description='{{task.description}}'
+                                        data-due-date='{{task.due_date}}'
+                                    >
+                                        Edit Task
+                                    </button>
+                                    
+                                    <!-- <input type="hidden" id="csrfTokenDelete" value="{{ csrf_token }}"> -->
+                                    <button id="deleteTask" data-task-id="{{ task.id }}" data-csrf="{{ csrf_token }}" onclick="deleteTask(this)">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+            <!-- Completed Tasks -->
+            
+            <div class="allTasks">
+                <h3>Completed Tasks</h3>
+                <div class="card-list">
+                    {% for task in completed_tasks %}
+                        <div class="task_card completed_task">
+                            <div class="task_checkbox">
+                                <input class="styled-checkbox" type="checkbox" name="completed" id="task_{{ task.id }}" {% if task.completed %} checked {% endif %} onclick="updateTaskStatus(this)">
+                            </div>
+                            <div class="task_details">
+                                <h4 class="task-completed">{{task.task_name}}</h4>
+                                <h7>Due on: {{task.due_date}}</h7>
+                                <div class="task_btns">
+                                    <button 
+                                        onclick="setupModal('editTaskForm', true, this)"
+                                        data-task-id='{{ task.id }}'
+                                        data-task-name='{{task.task_name}}'
+                                        data-task-description='{{task.description}}'
+                                        data-due-date='{{task.due_date}}'
+                                    >
+                                        Edit Task
+                                    </button>
+                                    
+                                    <!-- <input type="hidden" id="csrfTokenDelete" value="{{ csrf_token }}"> -->
+                                    <button id="deleteTask" data-task-id="{{ task.id }}" data-csrf="{{ csrf_token }}" onclick="deleteTask(this)">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+            </div>
+        </div>
+        </div>
+
+        
+    
+
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script  defer src="{% static 'home/js/home.js' %}"></script>
+</body>
+</html>

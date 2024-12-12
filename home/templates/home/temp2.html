@@ -1,0 +1,133 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .svg-icon {
+            color: red; /* or any color you want */
+        }
+
+        .menu {
+            cursor: pointer;
+        }
+
+        .menu svg {
+            transform: rotate(90deg);
+        }
+
+        .menu_btns {
+            display: block;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 10px 15px;
+        }
+
+        
+
+        .dropdown .select {
+            display: none;
+            position: absolute;
+            background-color: #E4E4E4;
+            min-width: 70px;
+            box-shadow: 2px 2px 5px #e4e4e496;
+        }
+
+
+
+    </style>
+</head>
+<body>
+    
+
+    <div class="dropdown">
+        <button class="menu" onclick="expandMenu()">
+            <!-- <?xml version="1.0" encoding="iso-8859-1"?> -->
+            <svg width="24" height="24" version="1.1" id="Icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 32 32" style="enable-background:new 0 0 32 32;" xml:space="preserve">
+                <style type="text/css">
+                    .st0 {
+                        fill: none;
+                        stroke: #000000;
+                        stroke-width: 2;
+                        stroke-linecap: round;
+                        stroke-linejoin: round;
+                        stroke-miterlimit: 10;
+                    }
+                </style>
+                <circle class="st0" cx="16" cy="7" r="2" />
+                <circle class="st0" cx="16" cy="16" r="2" />
+                <circle class="st0" cx="16" cy="25" r="2" />
+            </svg>
+        </button>
+        <div class="select" id="selectMenu">
+            <button class="menu_btns">Edit</button>
+            <button class="menu_btns">Delete</button>
+        </div>
+    </div>
+
+    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Placeat laborum, quas alias enim maxime aliquid repellat eius maiores tenetur debitis tempora distinctio illo ducimus facilis excepturi doloribus omnis! A, fugit?</p>
+
+
+    <div>
+        <!-- <a href="your-link.html" class="svg-icon">
+            <svg width="24" height="24"><path fill="none" stroke="currentColor" d="m16 10-4 4-4-4"></path></svg>
+            <svg width="24" height="24"><path fill="none" stroke="currentColor" d="m16 10-4 4-4-4"></path></svg>
+            <svg width="24" height="24">
+                <path fill="none" stroke="currentColor" transform="rotate(-90 12 12)" d="m16 10-4 4-4-4"></path>
+            </svg>
+    
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+                <g fill="none" fill-rule="evenodd">
+                    <path d="M24 0v24H0V0z"></path>
+                    <path fill="currentColor" fill-rule="nonzero" d="m10.707 12 3.647 3.646a.5.5 0 0 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 0 1 .708.708L10.707 12z"></path>
+                </g>
+            </svg>
+            
+        </a>
+    
+        <a href="">
+    
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+                <g fill="none" fill-rule="evenodd">
+                    <path d="M0 24V0h24v24z"></path>
+                    <path fill="currentColor" fill-rule="nonzero" d="M13.293 12 9.646 8.354a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 12z"></path>
+                </g>
+            </svg>
+        </a> -->
+    </div>
+
+
+    <button 
+        onclick="setupModal('editTaskForm', true, this)"
+        data-task-id='{{ task.id }}'
+        data-task-name='{{task.task_name}}'
+        data-task-description='{{task.description}}'
+        data-due-date='{{task.due_date}}'
+    >
+        Edit Task
+    </button>
+    
+    <!-- <input type="hidden" id="csrfTokenDelete" value="{{ csrf_token }}"> -->
+    <button id="deleteTask" data-task-id="{{ task.id }}" data-csrf="{{ csrf_token }}" onclick="deleteTask(this)">Delete</button>
+
+    <script>
+        function expandMenu() {
+            const menuContent = document.getElementById('selectMenu')
+
+                if (menuContent.style.display == 'none'|| menuContent.style.display === ''){
+                    menuContent.style.display = 'block'
+                }
+                else {
+                    menuContent.style.display = 'none'
+                }
+        }
+    </script>
+
+
+    
+    
+</body>
+</html>

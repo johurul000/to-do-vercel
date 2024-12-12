@@ -2,7 +2,7 @@
     "version": 2,
     "builds": [
       {
-        "src": "advance_to_do/wsgi.py",
+        "src": "src/wsgi.py",
         "use": "@vercel/python",
         "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
       },
@@ -16,12 +16,13 @@
     ],
     "routes": [
       {
-        "src": "/static/(.*)",
-        "dest": "/static/$1"
+        "src": "/(.*)",
+        "dest": "src/wsgi.py"
       },
       {
-        "src": "/(.*)",
-        "dest": "advance_to_do/wsgi.py"
+        "src": "/static/(.*)",
+        "dest": "/static/$1"
       }
+      
     ]
 }
